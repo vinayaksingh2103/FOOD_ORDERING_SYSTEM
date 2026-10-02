@@ -59,6 +59,35 @@ CREATE TABLE Orders (
     FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE RESTRICT
 );
 
+CREATE TABLE Order_Item (
+    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    item_id INT NOT NULL,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    unit_price DECIMAL(10,2) NOT NULL,
+    subtotal DECIMAL(10,2) GENERATED ALWAYS AS (quantity * unit_price) STORED,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES Food_Item(item_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE Payment (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL UNIQUE,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_method ENUM('Credit Card', 'Debit Card', 'UPI', 'Cash on Delivery') NOT NULL,
+    payment_status ENUM('Pending', 'Completed', 'Failed', 'Refunded') DEFAULT 'Pending',
+    payment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id) ON DELETE CASCADE
+);
+
+CREATE TABLE Delivery_Partner (
+    partner_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) UNIQUE NOT NULL,
+    vehicle_details VARCHAR(50),
+    is_available BOOLEAN DEFAULT TRUE
+);
+
 -- ==============================================================================
 -- ============================== Index Creation ================================
 -- ==============================================================================
