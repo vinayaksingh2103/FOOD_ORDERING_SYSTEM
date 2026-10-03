@@ -110,6 +110,7 @@ CREATE TABLE Review (
     FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE,
     UNIQUE (customer_id, restaurant_id) -- A customer can only leave one review per restaurant
 );
+
 -- ==============================================================================
 -- ============================== Index Creation ================================
 -- ==============================================================================
@@ -237,3 +238,32 @@ SELECT
 FROM Orders o
 JOIN Customer c ON o.customer_id = c.customer_id
 JOIN Restaurant r ON o.restaurant_id = r.restaurant_id;
+
+
+-- View 2: Restaurant Sales Summary
+CREATE OR REPLACE VIEW View_Restaurant_Sales AS
+SELECT 
+    r.restaurant_id,
+    r.name AS restaurant_name,
+    COUNT(o.order_id) AS total_orders,
+    SUM(o.total_amount) AS total_revenue,
+    AVG(o.total_amount) AS avg_order_value
+FROM Restaurant r
+LEFT JOIN Orders o ON r.restaurant_id = o.restaurant_id AND o.order_status != 'Cancelled'
+GROUP BY r.restaurant_id, r.name;
+
+-- View 3: Food Item Popularity
+CREATE OR REPLACE VIEW View_Food_Popularity AS
+SELECT 
+    f.item_id,
+    f.name AS food_item,
+    r.name AS restaurant_name,
+    SUM(oi.quantity) AS total_quantity_sold,
+    COUNT(DISTINCT oi.order_id) AS number_of_orders
+FROM Food_Item f
+JOIN Restaurant r ON f.restaurant_id = r.restaurant_id
+LEFT JOIN Order_Item oi ON f.item_id = oi.item_id
+GROUP BY f.item_id, f.name, r.name
+ORDER BY total_quantity_sold DESC;
+
+
