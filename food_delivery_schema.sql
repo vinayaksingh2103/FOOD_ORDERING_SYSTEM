@@ -88,6 +88,28 @@ CREATE TABLE Delivery_Partner (
     is_available BOOLEAN DEFAULT TRUE
 );
 
+CREATE TABLE Delivery (
+    delivery_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL UNIQUE,
+    partner_id INT NOT NULL,
+    delivery_status ENUM('Assigned', 'Picked Up', 'Delivered') DEFAULT 'Assigned',
+    assigned_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    delivered_time DATETIME NULL,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (partner_id) REFERENCES Delivery_Partner(partner_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE Review (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    restaurant_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE CASCADE,
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE,
+    UNIQUE (customer_id, restaurant_id) -- A customer can only leave one review per restaurant
+);
 -- ==============================================================================
 -- ============================== Index Creation ================================
 -- ==============================================================================
