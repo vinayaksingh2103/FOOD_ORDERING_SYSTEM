@@ -186,6 +186,41 @@ INSERT INTO Orders (customer_id, restaurant_id, order_date, order_status, total_
 (6, 1, '2023-10-06 21:00:00', 'Delivered', 350.00),
 (7, 4, '2023-10-07 13:30:00', 'Preparing', 620.00);
 
+-- Insert Order Items
+INSERT INTO Order_Item (order_id, item_id, quantity, unit_price) VALUES 
+(1, 1, 1, 250.00),
+(1, 14, 1, 450.00),
+(2, 4, 1, 150.00),
+(2, 5, 1, 80.00),
+(2, 6, 1, 50.00),
+(3, 7, 1, 200.00),
+(3, 8, 1, 180.00),
+(4, 9, 1, 280.00),
+(4, 10, 1, 120.00),
+(5, 12, 1, 400.00),
+(5, 13, 1, 150.00),
+(6, 4, 1, 150.00),
+(7, 2, 1, 350.00),
+(8, 9, 2, 280.00),
+(8, 6, 1, 60.00);
+
+-- Insert Payments
+INSERT INTO Payment (order_id, amount, payment_method, payment_status, payment_date) VALUES 
+(1, 700.00, 'UPI', 'Completed', '2023-10-01 12:35:00'),
+(2, 280.00, 'Credit Card', 'Completed', '2023-10-02 14:17:00'),
+(3, 380.00, 'Debit Card', 'Completed', '2023-10-02 19:47:00'),
+(4, 400.00, 'Cash on Delivery', 'Pending', '2023-10-03 20:00:00'),
+(5, 550.00, 'UPI', 'Completed', '2023-10-04 13:02:00'),
+(6, 150.00, 'Credit Card', 'Refunded', '2023-10-05 18:35:00'),
+(7, 350.00, 'UPI', 'Completed', '2023-10-06 21:05:00'),
+(8, 620.00, 'Credit Card', 'Completed', '2023-10-07 13:32:00');
+
+-- Insert Delivery Partners
+INSERT INTO Delivery_Partner (name, phone, vehicle_details, is_available) VALUES 
+('Ramesh Kumar', '9988776655', 'Bike - MH12AB1234', TRUE),
+('Suresh Singh', '9988776656', 'Scooter - MH12CD5678', FALSE),
+('John Doe', '9988776657', 'Bike - MH12EF9012', TRUE);
+
 -- ==============================================================================
 -- ============================= Views Creation =================================
 -- ==============================================================================
