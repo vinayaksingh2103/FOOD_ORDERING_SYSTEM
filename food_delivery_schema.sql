@@ -222,6 +222,21 @@ INSERT INTO Delivery_Partner (name, phone, vehicle_details, is_available) VALUES
 ('Suresh Singh', '9988776656', 'Scooter - MH12CD5678', FALSE),
 ('John Doe', '9988776657', 'Bike - MH12EF9012', TRUE);
 
+-- Insert Deliveries
+INSERT INTO Delivery (order_id, partner_id, delivery_status, assigned_time, delivered_time) VALUES 
+(1, 1, 'Delivered', '2023-10-01 12:45:00', '2023-10-01 13:15:00'),
+(2, 2, 'Delivered', '2023-10-02 14:25:00', '2023-10-02 14:50:00'),
+(3, 1, 'Delivered', '2023-10-02 20:00:00', '2023-10-02 20:30:00'),
+(4, 3, 'Picked Up', '2023-10-03 20:15:00', NULL),
+(7, 1, 'Delivered', '2023-10-06 21:15:00', '2023-10-06 21:40:00');
+
+-- Insert Reviews
+INSERT INTO Review (customer_id, restaurant_id, rating, comment, review_date) VALUES 
+(1, 1, 5, 'Amazing biryani and tikka!', '2023-10-01 14:00:00'),
+(2, 2, 4, 'Burgers were good, fries a bit cold.', '2023-10-02 15:30:00'),
+(3, 3, 5, 'Best vegan food in town.', '2023-10-03 10:00:00'),
+(6, 1, 4, 'Tasty, but a little too spicy for me.', '2023-10-07 09:00:00');
+
 -- ==============================================================================
 -- ============================= Views Creation =================================
 -- ==============================================================================
@@ -273,7 +288,31 @@ ORDER BY total_quantity_sold DESC;
 
 DELIMITER //
 
+-- Procedure 1: Get Customer Orders
+CREATE PROCEDURE GetCustomerOrders(IN p_customer_id INT)
+BEGIN
+    SELECT 
+        order_id, 
+        restaurant_id, 
+        order_date, 
+        total_amount, 
+        order_status
+    FROM Orders
+    WHERE customer_id = p_customer_id
+    ORDER BY order_date DESC;
+END //
 
+-- Procedure 2: Get Restaurant Sales Statistics
+CREATE PROCEDURE GetRestaurantSales(IN p_restaurant_id INT)
+BEGIN
+    SELECT 
+        COUNT(order_id) AS total_orders,
+        SUM(total_amount) AS total_revenue,
+        AVG(total_amount) AS average_order_value
+    FROM Orders
+    WHERE restaurant_id = p_restaurant_id 
+      AND order_status IN ('Delivered', 'Out for Delivery', 'Preparing');
+END //
 
 DELIMITER;
 
