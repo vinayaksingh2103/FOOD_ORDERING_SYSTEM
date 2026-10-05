@@ -316,3 +316,40 @@ END //
 
 DELIMITER;
 
+-- ==============================================================================
+-- ============================== Triggers ======================================
+-- ==============================================================================
+
+DELIMITER //
+
+-- Trigger 1: Auto-update Order Total when an Order_Item is inserted
+CREATE TRIGGER TRG_UpdateOrderTotal
+AFTER INSERT ON Order_Item
+FOR EACH ROW
+BEGIN
+    UPDATE Orders
+    SET total_amount = (
+        SELECT SUM(subtotal) 
+        FROM Order_Item 
+        WHERE order_id = NEW.order_id
+    )
+    WHERE order_id = NEW.order_id;
+END //
+
+-- Trigger 2: Update Restaurant Average Rating when a Review is added
+CREATE TRIGGER TRG_UpdateRestaurantRating
+AFTER INSERT ON Review
+FOR EACH ROW
+BEGIN
+    DECLARE avg_rating DECIMAL(3,2);
+    
+    SELECT AVG(rating) INTO avg_rating
+    FROM Review
+    WHERE restaurant_id = NEW.restaurant_id;
+    
+    UPDATE Restaurant
+    SET rating_avg = avg_rating
+    WHERE restaurant_id = NEW.restaurant_id;
+END //
+
+DELIMITER ;
